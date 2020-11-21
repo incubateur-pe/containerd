@@ -1,2 +1,6 @@
 ---
-# handlers file for containerd
+- name: "restart containerd"
+  systemd:
+    name: "containerd"
+    enabled: true
+    state: restarted

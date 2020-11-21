@@ -1,2 +1,24 @@
 ---
-# tasks file for containerd
+- name: Construct repository address
+  set_fact:
+    docker_repo_address: '{{ docker_repo | regex_replace("/$", "") }}/{{ ansible_distribution | lower }}'
+
+- name: "Set up package manager for {{ ansible_os_family }}"
+  include_tasks: "config_{{ ansible_os_family }}.yml"
+
+- name: Install containerd
+  package:
+    name:
+      - "containerd.io"
+  notify: restart containerd
+
+- name: containerd configuration
+  include_tasks: config_containerd.yml
+
+- meta: flush_handlers
+
+- name: Ensure containerd is started and enabled
+  systemd:
+    name: "containerd"
+    enabled: true
+    state: started

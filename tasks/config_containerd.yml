@@ -1,0 +1,34 @@
+---
+- name: Ensure containerd directories exists
+  file:
+    state: directory
+    path: "{{ item.dir }}"
+    mode: "{{ item.mode }}"
+  with_items:
+    - dir: "{{ containerd_data_root }}"
+      mode: "0711"
+    - dir: /etc/containerd
+      mode: "0700"
+
+- name: Check if containerd config exists
+  stat:
+    path: /etc/containerd/config.toml
+  register: containerd_config
+
+- name: Check if containerd is properly configured
+  command: 'egrep -v "^$|^#|^disabled_plugins" /etc/containerd/config.toml'
+  register: containerd_config_lines
+  when: containerd_config.stat.exists
+  failed_when: false
+  changed_when: false
+
+- name: Configure containerd
+  shell: "containerd config default > /etc/containerd/config.toml"
+  when: not containerd_config.stat.exists or containerd_config_lines.stdout_lines | length == 0
+  notify: restart containerd
+
+- name: Configure containerd data root
+  lineinfile:
+    regexp: "^root *=.*"
+    line: 'root = "{{ containerd_data_root }}"'
+    path: /etc/containerd/config.toml
