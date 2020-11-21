@@ -2,11 +2,11 @@
 
 
 def test_containerd_installed(host):
-    containerd = host.file("/usr/bin/ctr")
-    assert config.exists
-    assert config.user == "root"
-    assert config.group == "root"
-    assert config.mode == 0o755
+    containerd = host.file("/usr/bin/containerd")
+    assert containerd.exists
+    assert containerd.user == "root"
+    assert containerd.group == "root"
+    assert containerd.mode == 0o755
 
 
 def test_containerd_service(host):
