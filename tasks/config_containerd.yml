@@ -32,3 +32,52 @@
     regexp: "^root *=.*"
     line: 'root = "{{ containerd_data_root }}"'
     path: /etc/containerd/config.toml
+
+- block:
+  - name: Configure cri plugin registry section
+    lineinfile:
+      line: "{{ item.line | indent(item.indent, true)}}"
+      regexp: '^ *\[{{ item.line }}\]'
+      insertafter: "^ *{{ item.parent }}"
+      path: /etc/containerd/config.toml
+    with_items:
+      - line: '[plugins."io.containerd.grpc.v1.cri"]'
+        parent: 'plugins'
+        indent: 2
+      - line: '[plugins."io.containerd.grpc.v1.cri".registry]'
+        parent: 'plugins."io.containerd.grpc.v1.cri"'
+        indent: 4
+      - line: '[plugins."io.containerd.grpc.v1.cri".registry.mirrors]'
+        parent: 'plugins."io.containerd.grpc.v1.cri".registry'
+        indent: 6
+
+  - name: Configure registry mirrors
+    blockinfile:
+      marker: "# {mark} ANSIBLE MANAGED MIRRORS"
+      insertafter: '^ *\[plugins."io.containerd.grpc.v1.cri".registry.mirrors\]'
+      block: '{{ lookup("template", role_path + "/templates/registry_mirrors.toml.j2") }}'
+      path: /etc/containerd/config.toml
+    notify: restart containerd
+
+  - name: Get registry config value
+    set_fact:
+      registry_config: '{{ lookup("template", role_path + "/templates/registry_config.toml.j2") }}'
+
+  - name: Configure cri plugin registry config section
+    lineinfile:
+      line: '      [plugin."io.containerd.grpc.v1.cri".registry.configs]'
+      regexp: '^ *\[plugin."io.containerd.grpc.v1.cri".registry.configs\]'
+      insertafter: '^ *\[plugins."io.containerd.grpc.v1.cri".registry\]'
+      path: /etc/containerd/config.toml
+    when: registry_config | length > 50
+
+  - name: Configure registry parameters
+    blockinfile:
+      marker: "# {mark} ANSIBLE MANAGED REGISTRY CONFIG"
+      insertafter: '^ *\[plugin."io.containerd.grpc.v1.cri".registry.configs\]'
+      block: '{{ registry_config }}'
+      path: /etc/containerd/config.toml
+    notify: restart containerd
+    when: registry_config | length > 50
+
+  when: containerd_registry_mirrors is defined and containerd_registry_mirrors | length > 0

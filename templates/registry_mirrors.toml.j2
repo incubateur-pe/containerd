@@ -1,0 +1,4 @@
+{% for registry in containerd_registry_mirrors %}
+        [plugins."io.containerd.grpc.v1.cri".registry.mirrors."{{ registry.name }}"]
+          endpoint = {{ registry.endpoint | tojson }}
+{% endfor %}

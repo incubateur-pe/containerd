@@ -5,3 +5,12 @@
     - name: "Include containerd"
       include_role:
         name: "containerd"
+      vars:
+        containerd_registry_mirrors:
+        - name: quay.io
+          endpoint:
+            - http://10.0.4.40:5002
+        - name: test
+          endpoint:
+            - https://10.0.4.40.5001
+          skip_ssl_verify: true
