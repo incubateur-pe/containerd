@@ -1,0 +1,73 @@
+---
+stages:
+  - lint
+  - test
+  - merge
+  - release
+
+.onlys_changes: &only_changes
+  changes:
+    - "molecule/**/*"
+    - "defaults/**/*"
+    - "handlers/**/*"
+    - "meta/**/*"
+    - "tasks/**/*"
+    - "templates/**/*"
+    - "vars/**/*"
+    - "*.yaml"
+    - "*.yml"
+
+lint:
+  tags:
+    - kvm
+  stage: lint
+  script:
+    - docker run --env-file molecule/common/env_ci_${ENV_KIND}.sh -v $(pwd):/sources/containerd -w /sources/containerd --rm ulrichg/molecule-vagrant-libvirt:latest lint
+
+test-all:
+  tags:
+    - kvm
+  stage: test
+  except:
+    refs:
+      - schedules
+  only:
+    <<: *only_changes
+  script:
+    - docker run --env-file molecule/common/env_ci_${ENV_KIND}.sh -e http_proxy="$http_proxy" -e https_proxy="$https_proxy" -e HTTP_PROXY="$HTTP_PROXY" -e HTTPS_PROXY="$HTTPS_PROXY" -e no_proxy="$no_proxy" -e NO_PROXY="$NO_PROXY" -v $(pwd):/sources/containerd -w /sources/containerd -v ~/.vagrant.d/boxes/:/root/.vagrant.d/boxes/ -v /var/run/libvirt/libvirt-sock:/var/run/libvirt/libvirt-sock --rm ulrichg/molecule-vagrant-libvirt:latest
+
+new-tag:
+  stage: release
+  image:
+    name: marcelocorreia/semver
+    entrypoint: [""]
+  tags:
+    - docker
+  only:
+    <<: *only_changes
+    refs:
+      - master
+  except:
+    refs:
+      - tags
+      - schedules
+  script:
+    - git config user.email "${GITLAB_USER_EMAIL}"
+    - git config user.name "${GITLAB_USER_NAME}"
+    - git remote add api-origin https://oauth2:${GITLAB_ACCESS_TOKEN}@gitlab.com/${CI_PROJECT_PATH}
+    - if [ -z "$(git tag --points-at HEAD)" ] ; then git tag $(semver -c -i patch $(git describe --tags --abbrev=0)); fi
+    - git push api-origin --tags
+
+publish:
+  stage: release
+  image:
+    name: ansible/ansible-runner
+    entrypoint: [""]
+  tags:
+    - docker
+  only:
+    refs:
+      - tags
+  script:
+    - ansible-galaxy login --api-key "${GALAXY_TOKEN}" --github-token "${GITHUB_TOKEN}"
+    - ansible-galaxy import incubateur-pe containerd
