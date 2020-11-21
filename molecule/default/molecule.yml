@@ -25,6 +25,14 @@ lint: |
   flake8
 provisioner:
   name: ansible
+  inventory:
+    host_vars:
+      centos7:
+        docker_repo: ${DOCKER_YUM_MIRROR}
+      fedora:
+        docker_repo: ${DOCKER_YUM_MIRROR}
+      debian:
+        docker_repo: ${DOCKER_APT_MIRROR}
   connection_options:
     ansible_ssh_user: vagrant
     ansible_become: true
