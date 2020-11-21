@@ -35,14 +35,10 @@
     warn: false
   when: add_repository_key is failed
 
-- name: Define release channel to use
-  set_fact:
-    docker_release: "{% if docker_enable_test %}test{% elif docker_enable_edge %}edge{% else %}stable{% endif %}"
-
 - name: Add Docker repository
   apt_repository:
     repo: >-
       deb [arch={{ (ansible_architecture == 'x86_64') | ternary('amd64', ansible_architecture) }}]
       {{ docker_repo | regex_replace("/$", "") }}/{{ ansible_distribution | lower }}
-      {{ ansible_distribution_release }} {{ docker_release }}
+      {{ ansible_distribution_release }} stable
     state: present
