@@ -7,15 +7,15 @@
 
 - name: Configure yum docker repository
   get_url:
-    url: "{{ docker_repo_address }}/docker-{{ docker_edition }}.repo"
-    dest: '/etc/yum.repos.d/docker-{{ docker_edition }}.repo'
+    url: "{{ docker_repo_address }}/docker-ce.repo"
+    dest: '/etc/yum.repos.d/docker-ce.repo'
     owner: root
     group: root
     mode: 0644
 
 - name: Set baseUrl for docker repository
   replace:
-    path: /etc/yum.repos.d/docker-{{ docker_edition }}.repo
+    path: /etc/yum.repos.d/docker-ce.repo
     regexp: '^baseurl=https://download.docker.com/linux/(.*)$'
     replace: 'baseurl={{ docker_repo | regex_replace("/$", "") }}/\1'
 
