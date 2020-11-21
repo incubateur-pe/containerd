@@ -36,9 +36,9 @@
 - block:
   - name: Configure cri plugin registry section
     lineinfile:
-      line: "{{ item.line | indent(item.indent, true)}}"
+      line: "{{ item.line | indent(item.indent, true) }}"
       regexp: '^ *\[{{ item.line }}\]'
-      insertafter: "^ *{{ item.parent }}"
+      insertafter: '^ *\[{{ item.parent }}\]'
       path: /etc/containerd/config.toml
     with_items:
       - line: '[plugins."io.containerd.grpc.v1.cri"]'
