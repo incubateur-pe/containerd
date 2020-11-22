@@ -9,7 +9,7 @@ Role Variables
 | Nom | valeur par defaut | description |
 |-----|-------------------|-------------|
 | containerd_repo | https://download.docker.com/linux/ | containerd repository (or mirror to) containing packages |
-| containerd_data_root | /var/lib/docker | containerd data directory  |
+| containerd_data_root | /var/lib/containerd | containerd data directory  |
 | containerd_registry_mirrors | [] | Registries to configure as mirrors |
 | containerd_registry_mirrors[*].name | N/A | Name of the registry, example: gcr.io |
 | containerd_registry_mirrors[*].endpoint[] | N/A | endpoints of the registry, example: ["https://gcr.io"] |
