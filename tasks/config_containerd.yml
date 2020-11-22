@@ -44,6 +44,9 @@
       - line: '[plugins."io.containerd.grpc.v1.cri"]'
         parent: 'plugins'
         indent: 2
+      - line: '[plugins."io.containerd.grpc.v1.cri".cni]'
+        parent: 'plugins."io.containerd.grpc.v1.cri"'
+        indent: 4
       - line: '[plugins."io.containerd.grpc.v1.cri".registry]'
         parent: 'plugins."io.containerd.grpc.v1.cri"'
         indent: 4
@@ -65,11 +68,15 @@
 
   - name: Configure cri plugin registry config section
     lineinfile:
-      line: '      [plugin."io.containerd.grpc.v1.cri".registry.configs]'
-      regexp: '^ *\[plugin."io.containerd.grpc.v1.cri".registry.configs\]'
-      insertafter: '^ *\[plugins."io.containerd.grpc.v1.cri".registry\]'
+      line: '      {{ item.name }} = "{{ item.value }}"'
+      regexp: '^ +{{ item.name }} *= *'
+      insertafter: '^ *\[plugins."io.containerd.grpc.v1.cri".cni\]'
       path: /etc/containerd/config.toml
-    when: registry_config | length > 50
+    with_items:
+      - name: bin_dir
+        value: "{{ containerd_cni_bin_dir }}"
+      - name: conf_dir
+        value: "{{ containerd_cni_conf_dir }}"
 
   - name: Configure registry parameters
     blockinfile:
@@ -79,5 +86,12 @@
       path: /etc/containerd/config.toml
     notify: restart containerd
     when: registry_config | length > 50
+
+  - name: Configure CNI parameters
+    lineinfile:
+      line: '      [plugin."io.containerd.grpc.v1.cri".registry.configs]'
+      regexp: '^ *\[plugin."io.containerd.grpc.v1.cri".registry.configs\]'
+      insertafter: '^ *\[plugins."io.containerd.grpc.v1.cri".registry\]'
+      path: /etc/containerd/config.toml
 
   when: containerd_registry_mirrors is defined and containerd_registry_mirrors | length > 0
