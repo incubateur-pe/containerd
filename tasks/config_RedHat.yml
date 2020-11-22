@@ -30,3 +30,20 @@
       command: dnf -y module disable container-tools
       changed_when: false
   when: ansible_distribution_major_version | int == 8
+
+- name: Configure containerd on Fedora >= 31
+  block:
+  - name: Check if cgroupsV1 are currently in use
+    command: 'grep unified_cgroup_hierarchy=0 /boot/grub2/grubenv'
+    register: cgroupV1_config
+    failed_when: false
+    changed_when: false
+
+  - name: Configure cgroupsV1 on fedora >= 31
+    command: 'grubby --update-kernel=ALL --args="systemd.unified_cgroup_hierarchy=0"'
+    when: cgroupV1_config.stdout_lines|length != 1
+
+  - name: Reboot for cgroup change
+    reboot:
+    when: cgroupV1_config.stdout_lines|length != 1
+  when: ansible_distribution == "Fedora" and ansible_distribution_version|int >= 31
