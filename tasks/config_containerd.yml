@@ -66,7 +66,7 @@
     set_fact:
       registry_config: '{{ lookup("template", role_path + "/templates/registry_config.toml.j2") }}'
 
-  - name: Configure cri plugin registry config section
+  - name: Configure CNI parameters
     lineinfile:
       line: '      {{ item.name }} = "{{ item.value }}"'
       regexp: '^ +{{ item.name }} *= *'
@@ -78,6 +78,13 @@
       - name: conf_dir
         value: "{{ containerd_cni_conf_dir }}"
 
+  - name: Configure cri plugin registry config section
+    lineinfile:
+      line: '      [plugin."io.containerd.grpc.v1.cri".registry.configs]'
+      regexp: '^ *\[plugin."io.containerd.grpc.v1.cri".registry.configs\]'
+      insertafter: '^ *\[plugins."io.containerd.grpc.v1.cri".registry\]'
+      path: /etc/containerd/config.toml
+
   - name: Configure registry parameters
     blockinfile:
       marker: "# {mark} ANSIBLE MANAGED REGISTRY CONFIG"
@@ -86,12 +93,5 @@
       path: /etc/containerd/config.toml
     notify: restart containerd
     when: registry_config | length > 50
-
-  - name: Configure CNI parameters
-    lineinfile:
-      line: '      [plugin."io.containerd.grpc.v1.cri".registry.configs]'
-      regexp: '^ *\[plugin."io.containerd.grpc.v1.cri".registry.configs\]'
-      insertafter: '^ *\[plugins."io.containerd.grpc.v1.cri".registry\]'
-      path: /etc/containerd/config.toml
 
   when: containerd_registry_mirrors is defined and containerd_registry_mirrors | length > 0
