@@ -14,6 +14,7 @@ def test_containerd_service(host):
     assert containerd.is_running
     assert containerd.is_enabled
 
+
 def test_containerd_config(host):
     config = host.file("/etc/containerd/config.toml")
     assert config.exists
