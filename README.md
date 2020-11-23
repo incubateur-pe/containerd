@@ -14,6 +14,7 @@ Role Variables
 | containerd_registry_mirrors[*].name | N/A | Name of the registry, example: gcr.io |
 | containerd_registry_mirrors[*].endpoint[] | N/A | endpoints of the registry, example: ["https://gcr.io"] |
 | containerd_registry_mirrors[*].skip_ssl_verify | N/A | whether to trust a self signed certificate on this mirror |
+| containerd_dockerio_mirror | https://registry-1.docker.io | mirror to docker.io |
 | containerd_cni_bin_dir | fedora : /usr/libexec/cni, others: /opt/cni/bin | CNI drivers binary directory |
 | containerd_cni_conf_dir | /etc/cni/net.d | cni drivers configuration directory |
 | docker_apt_ignore_key_error | true | Ignore errors on gpg key import |

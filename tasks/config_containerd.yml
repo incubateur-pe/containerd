@@ -33,6 +33,13 @@
     line: 'root = "{{ containerd_data_root }}"'
     path: /etc/containerd/config.toml
 
+- name: Configure docker.io mirror
+  lineinfile:
+    regexp: "^ * endpoint *=.*"
+    line: '          endpoint = ["{{ containerd_dockerio_mirror }}"]'
+    insertafter: '^ *\[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"\]'
+    path: /etc/containerd/config.toml
+
 - block:
   - name: Configure cri plugin registry section
     lineinfile:
