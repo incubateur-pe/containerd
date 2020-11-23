@@ -1,0 +1,11 @@
+---
+- name: Prepare
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Installe les pré-requis python
+      pip:
+        executable: /usr/bin/pip3
+        name:
+          - jmespath

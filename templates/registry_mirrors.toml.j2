@@ -1,4 +1,6 @@
 {% for registry in containerd_registry_mirrors %}
+{% if registry.name != "docker.io" %}
         [plugins."io.containerd.grpc.v1.cri".registry.mirrors."{{ registry.name }}"]
           endpoint = {{ registry.endpoint | tojson }}
+{% endif %}
 {% endfor %}
