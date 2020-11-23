@@ -1,13 +1,13 @@
 ---
 - name: Add Docker repository GPG key
   rpm_key:
-    key: "{{ docker_repo_address }}/gpg"
-    validate_certs: "{{ docker_repo_valid_ssl }}"
+    key: "{{ containerd_repo_address }}/gpg"
+    validate_certs: "{{ containerd_repo_valid_ssl }}"
     state: present
 
 - name: Configure yum docker repository
   get_url:
-    url: "{{ docker_repo_address }}/docker-ce.repo"
+    url: "{{ containerd_repo_address }}/docker-ce.repo"
     dest: '/etc/yum.repos.d/docker-ce.repo'
     owner: root
     group: root
@@ -17,7 +17,7 @@
   replace:
     path: /etc/yum.repos.d/docker-ce.repo
     regexp: '^baseurl=https://download.docker.com/linux/(.*)$'
-    replace: 'baseurl={{ docker_repo | regex_replace("/$", "") }}/\1'
+    replace: 'baseurl={{ containerd_repo | regex_replace("/$", "") }}/\1'
 
 - name: Configure containerd on RHEL 8
   block:

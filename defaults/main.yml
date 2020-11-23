@@ -1,5 +1,5 @@
 ---
-docker_repo: https://download.docker.com/linux/
+containerd_repo: https://download.docker.com/linux/
 docker_apt_ignore_key_error: true
 containerd_repo_valid_ssl: true
 containerd_cni_bin_dir: "{{ (ansible_distribution != 'Fedora') | ternary('/opt/cni/bin', '/usr/libexec/cni') }}"
