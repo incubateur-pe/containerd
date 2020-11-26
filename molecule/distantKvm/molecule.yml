@@ -1,0 +1,80 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+  provider:
+    name: libvirt
+platforms:
+  - name: fedora
+    box: fedora/32-cloud-base
+    memory: 1024
+    cpus: 1
+    provider_options:
+      connect_via_ssh: true
+    provider_raw_config_args:
+      - 'host="iugi3000-HP-ProDesk-400-G4-MT.dgasi.pole-emploi.intra"'
+      - 'username="libvirt-user"'
+    interfaces:
+      - auto_config: true
+        network_name: private_network
+        type: dhcp
+  - name: centos7
+    box: centos/7
+    memory: 1024
+    cpus: 1
+    provider_options:
+      connect_via_ssh: true
+    provider_raw_config_args:
+      - 'host="iugi3000-HP-ProDesk-400-G4-MT.dgasi.pole-emploi.intra"'
+      - 'username="libvirt-user"'
+    interfaces:
+      - auto_config: true
+        network_name: private_network
+        type: dhcp
+  - name: debian
+    box: debian/buster64
+    memory: 1024
+    cpus: 1
+    provider_options:
+      connect_via_ssh: true
+    provider_raw_config_args:
+      - 'host="iugi3000-HP-ProDesk-400-G4-MT.dgasi.pole-emploi.intra"'
+      - 'username="libvirt-user"'
+    interfaces:
+      - auto_config: true
+        network_name: private_network
+        type: dhcp
+lint: |
+  set -e
+  yamllint .
+  ansible-lint .
+  flake8
+provisioner:
+  name: ansible
+  config_options:
+    ssh_connection:
+      ssh_args: -o ControlMaster=auto -o ControlPersist=60s -o ProxyCommand="ssh -W %h:%p -q -l libvirt-user iugi3000-HP-ProDesk-400-G4-MT.dgasi.pole-emploi.intra"
+  inventory:
+    host_vars:
+      centos7:
+        containerd_repo: ${DOCKER_YUM_MIRROR}
+      fedora:
+        containerd_repo: ${DOCKER_YUM_MIRROR}
+      debian:
+        containerd_repo: ${DOCKER_APT_MIRROR}
+  connection_options:
+    ansible_ssh_user: vagrant
+    ansible_become: true
+  log: true
+  lint:
+    name: ansible-lint
+scenario:
+  name: distantKvm
+verifier:
+  name: testinfra
+  options:
+    ssh-config: ../common/tests/ssh_config
+  directory: ../common/tests/
+  lint:
+    name: flake8
