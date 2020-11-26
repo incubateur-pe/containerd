@@ -89,15 +89,15 @@
 
   - name: Configure cri plugin registry config section
     lineinfile:
-      line: '      [plugin."io.containerd.grpc.v1.cri".registry.configs]'
-      regexp: '^ *\[plugin."io.containerd.grpc.v1.cri".registry.configs\]'
+      line: '      [plugins."io.containerd.grpc.v1.cri".registry.configs]'
+      regexp: '^ *\[plugins."io.containerd.grpc.v1.cri".registry.configs\]'
       insertafter: '^ *\[plugins."io.containerd.grpc.v1.cri".registry\]'
       path: /etc/containerd/config.toml
 
   - name: Configure registry parameters
     blockinfile:
       marker: "# {mark} ANSIBLE MANAGED REGISTRY CONFIG"
-      insertafter: '^ *\[plugin."io.containerd.grpc.v1.cri".registry.configs\]'
+      insertafter: '^ *\[plugins."io.containerd.grpc.v1.cri".registry.configs\]'
       block: '{{ registry_config }}'
       path: /etc/containerd/config.toml
     notify: restart containerd

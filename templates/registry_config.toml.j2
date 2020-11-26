@@ -1,6 +1,7 @@
 {% for registry in containerd_registry_mirrors %}
 {% if registry.skip_ssl_verify is defined and registry.skip_ssl_verify %}
-        [plugin."io.containerd.grpc.v1.cri".registry.configs."{{ registry.name }}".tls]
-          insecure_skip_verify = true
+        [plugins."io.containerd.grpc.v1.cri".registry.configs."{{ registry.name }}"]
+          [plugins."io.containerd.grpc.v1.cri".registry.configs."{{ registry.name }}".tls]
+            insecure_skip_verify = true
 {% endif %}
 {% endfor %}
