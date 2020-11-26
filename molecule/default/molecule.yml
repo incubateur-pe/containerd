@@ -10,14 +10,23 @@ platforms:
     box: fedora/32-cloud-base
     memory: 1024
     cpus: 1
+    provider_options:
+      connect_via_ssh: ${REMOTE_HOST:-false}
+    provider_raw_config_args: ${PROVIDER_ARGS:-"[]"}
   - name: centos7
     box: centos/7
     memory: 1024
     cpus: 1
+    provider_options:
+      connect_via_ssh: ${REMOTE_HOST:-false}
+    provider_raw_config_args: ${PROVIDER_ARGS:-"[]"}
   - name: debian
     box: debian/buster64
     memory: 1024
     cpus: 1
+    provider_options:
+      connect_via_ssh: ${REMOTE_HOST:-false}
+    provider_raw_config_args: ${PROVIDER_ARGS:-"[]"}
 lint: |
   set -e
   yamllint .
@@ -25,6 +34,9 @@ lint: |
   flake8
 provisioner:
   name: ansible
+  config_options:
+      ssh_connection:
+        ssh_args: ${SSH_ARGS:-""}
   inventory:
     host_vars:
       centos7:
@@ -43,6 +55,8 @@ scenario:
   name: default
 verifier:
   name: testinfra
+  options:
+    ssh-config: ../common/tests/${SSH_CONFIG}
   directory: ../common/tests/
   lint:
     name: flake8
