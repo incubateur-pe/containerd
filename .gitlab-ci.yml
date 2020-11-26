@@ -22,7 +22,7 @@ lint:
     - kvm
   stage: lint
   script:
-    - docker run --env-file molecule/common/env_ci_${ENV_KIND}.sh -v $(pwd):/sources/containerd -w /sources/containerd --rm ulrichg/molecule-vagrant-libvirt:latest lint
+    - docker run --env-file molecule/common/env_${ENV_KIND}.sh -v $(pwd):/sources/containerd -w /sources/containerd --rm ulrichg/molecule-vagrant-libvirt:latest lint
 
 test-all:
   tags:
@@ -34,7 +34,7 @@ test-all:
   only:
     <<: *only_changes
   script:
-    - docker run --env-file molecule/common/env_ci_${ENV_KIND}.sh -e http_proxy="$http_proxy" -e https_proxy="$https_proxy" -e HTTP_PROXY="$HTTP_PROXY" -e HTTPS_PROXY="$HTTPS_PROXY" -e no_proxy="$no_proxy" -e NO_PROXY="$NO_PROXY" -v $(pwd):/sources/containerd -w /sources/containerd -v ~/.vagrant.d/boxes/:/root/.vagrant.d/boxes/ -v /var/run/libvirt/libvirt-sock:/var/run/libvirt/libvirt-sock --rm ulrichg/molecule-vagrant-libvirt:latest
+    - docker run --env-file molecule/common/env_${ENV_KIND}.sh -e http_proxy="$http_proxy" -e https_proxy="$https_proxy" -e HTTP_PROXY="$HTTP_PROXY" -e HTTPS_PROXY="$HTTPS_PROXY" -e no_proxy="$no_proxy" -e NO_PROXY="$NO_PROXY" -v $(pwd):/sources/containerd -w /sources/containerd -v ~/.vagrant.d/boxes/:/root/.vagrant.d/boxes/ -v /var/run/libvirt/libvirt-sock:/var/run/libvirt/libvirt-sock --rm ulrichg/molecule-vagrant-libvirt:latest
 
 new-tag:
   stage: release
