@@ -19,7 +19,7 @@
         containerd_registry_configs:
           - name: test
             tls:
-              skip_ssl_verify: true
+              insecure_skip_verify: true
             auth:
               username: fakeUser
               password: fakePassword
