@@ -31,6 +31,31 @@ Simple containerd install:
   - role: 'containerd'
 ```
 
+Registry configuration example :
+
+```yaml
+- hosts: all
+  tasks:
+    roles:
+    - role: "containerd"
+  vars:
+    containerd_registry_mirrors:
+      - name: test.local
+        endpoint:
+        - https://repository_address
+      - name: docker.io
+        endpoint:
+        - http://docker_io_mirror.local
+    containerd_registry_configs:
+      - name: test.local
+        tls:
+          insecure_skip_verify: true
+        auth:
+          username: fakeUser
+          password: fakePassword
+          auth: "{{ ('fakeUser:fakePassword') | b64encode }}"
+          identitytoken: "token"
+```
 
 Tests
 -----
