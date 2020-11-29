@@ -71,10 +71,6 @@
       path: /etc/containerd/config.toml
     notify: restart containerd
 
-  - name: Get registry config value
-    set_fact:
-      registry_config: '{{ lookup("template", role_path + "/templates/registry_config.toml.j2") }}'
-
   - name: Configure CNI parameters
     lineinfile:
       line: '      {{ item.name }} = "{{ item.value }}"'
@@ -94,6 +90,13 @@
       insertafter: '^ *\[plugins."io.containerd.grpc.v1.cri".registry\]'
       path: /etc/containerd/config.toml
 
+  when: containerd_registry_mirrors is defined and containerd_registry_mirrors | length > 0
+
+- block:
+  - name: Get registry config value
+    set_fact:
+      registry_config: '{{ lookup("template", role_path + "/templates/registry_config.toml.j2") }}'
+
   - name: Configure registry parameters
     blockinfile:
       marker: "# {mark} ANSIBLE MANAGED REGISTRY CONFIG"
@@ -103,4 +106,4 @@
     notify: restart containerd
     when: registry_config | length > 50
 
-  when: containerd_registry_mirrors is defined and containerd_registry_mirrors | length > 0
+  when: containerd_registry_configs is defined and containerd_registry_configs | length > 0
