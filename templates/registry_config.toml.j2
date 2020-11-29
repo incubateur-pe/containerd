@@ -1,15 +1,16 @@
+#jinja2: lstrip_blocks: 'True'
 {% for registry in containerd_registry_configs %}
-{% if registry.tls is defined or registry.auth is defined %}
         [plugins."io.containerd.grpc.v1.cri".registry.configs."{{ registry.name }}"]
-{% endif %}
-{% if registry.tls is defined and registry.tls.skip_ssl_verify is defined and registry.tls.skip_ssl_verify %}
-          [plugins."io.containerd.grpc.v1.cri".registry.configs."{{ registry.name }}".tls]
-            insecure_skip_verify = true
-{% endif %}
-{% if registry.auth is defined %}
-          [plugins."io.containerd.grpc.v1.cri".registry.configs."{{ registry.name }}".auth]
-{% for key,value in registry.auth.items() %}
+  {% for key in registry.keys() %}
+    {% if key != "name" %}
+          [plugins."io.containerd.grpc.v1.cri".registry.configs."{{ registry.name }}".{{ key }}]
+      {% for key,value in registry[key].items() %}
+        {% if value is boolean %}
+            {{ key }} = {{ value | ternary('true', 'false') }}
+        {% else %}
             {{ key }} = "{{ value }}"
-{% endfor %}
-{% endif %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  {% endfor %}
 {% endfor %}

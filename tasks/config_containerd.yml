@@ -92,18 +92,11 @@
 
   when: containerd_registry_mirrors is defined and containerd_registry_mirrors | length > 0
 
-- block:
-  - name: Get registry config value
-    set_fact:
-      registry_config: '{{ lookup("template", role_path + "/templates/registry_config.toml.j2") }}'
-
-  - name: Configure registry parameters
-    blockinfile:
-      marker: "# {mark} ANSIBLE MANAGED REGISTRY CONFIG"
-      insertafter: '^ *\[plugins."io.containerd.grpc.v1.cri".registry.configs\]'
-      block: '{{ registry_config }}'
-      path: /etc/containerd/config.toml
-    notify: restart containerd
-    when: registry_config | length > 50
-
+- name: Configure registry parameters
+  blockinfile:
+    marker: "# {mark} ANSIBLE MANAGED REGISTRY CONFIG"
+    insertafter: '^ *\[plugins."io.containerd.grpc.v1.cri".registry.configs\]'
+    block: '{{ lookup("template", role_path + "/templates/registry_config.toml.j2") }}'
+    path: /etc/containerd/config.toml
+  notify: restart containerd
   when: containerd_registry_configs is defined and containerd_registry_configs | length > 0
