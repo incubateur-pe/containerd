@@ -20,6 +20,11 @@
           - name: test
             tls:
               skip_ssl_verify: true
+            auth:
+              username: fakeUser
+              password: fakePassword
+              auth: "{{ ('fakeUser:fakePassword') | b64encode }}"
+              identitytoken: "token"
 
   environment:
     http_proxy: "{{ lookup('env', 'http_proxy') }}"
