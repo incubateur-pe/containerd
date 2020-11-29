@@ -6,7 +6,21 @@
       include_role:
         name: "containerd"
       vars:
-        containerd_registry_mirrors: "{{ lookup('env', 'CONTAINERD_MIRRORS') | from_json }}"
+        containerd_registry_mirrors:
+          - name: quay.io
+            endpoint:
+            - http://10.0.4.40:5002
+          - name: test
+            endpoint:
+            - https://10.0.4.40.5001
+          - name: docker.io
+            endpoint:
+            - http://10.0.4.40:5005
+        containerd_registry_configs:
+          - name: test
+            tls:
+              skip_ssl_verify: true
+
   environment:
     http_proxy: "{{ lookup('env', 'http_proxy') }}"
     https_proxy: "{{ lookup('env', 'http_proxy') }}"
