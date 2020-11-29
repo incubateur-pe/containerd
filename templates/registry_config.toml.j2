@@ -1,9 +1,15 @@
 {% for registry in containerd_registry_configs %}
-{% if registry.tls is defined %}
+{% if registry.tls is defined or registry.auth is defined %}
         [plugins."io.containerd.grpc.v1.cri".registry.configs."{{ registry.name }}"]
 {% endif %}
 {% if registry.tls is defined and registry.tls.skip_ssl_verify is defined and registry.tls.skip_ssl_verify %}
           [plugins."io.containerd.grpc.v1.cri".registry.configs."{{ registry.name }}".tls]
             insecure_skip_verify = true
+{% endif %}
+{% if registry.auth is defined %}
+          [plugins."io.containerd.grpc.v1.cri".registry.configs."{{ registry.name }}".auth]
+{% for key,value in registry.auth.items() %}
+            {{ key }} = "{{ value }}"
+{% endfor %}
 {% endif %}
 {% endfor %}
