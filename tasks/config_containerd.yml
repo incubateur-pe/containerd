@@ -42,6 +42,32 @@
   vars:
     dockerio_endpoint: "{{ containerd_registry_mirrors | json_query('[?name==`docker.io`].endpoint[]') }}"
 
+- name: Configure cri plugin section
+  lineinfile:
+    line: "{{ item.line | indent(item.indent, true) }}"
+    regexp: '^ *\[{{ item.line }}\]'
+    insertafter: '^ *\[{{ item.parent }}\]'
+    path: /etc/containerd/config.toml
+  with_items:
+    - line: '[plugins."io.containerd.grpc.v1.cri"]'
+      parent: 'plugins'
+      indent: 2
+    - line: '[plugins."io.containerd.grpc.v1.cri".cni]'
+      parent: 'plugins."io.containerd.grpc.v1.cri"'
+      indent: 4
+
+- name: Configure CNI parameters
+  lineinfile:
+    line: '      {{ item.name }} = "{{ item.value }}"'
+    regexp: '^ +{{ item.name }} *= *'
+    insertafter: '^ *\[plugins."io.containerd.grpc.v1.cri".cni\]'
+    path: /etc/containerd/config.toml
+  with_items:
+    - name: bin_dir
+      value: "{{ containerd_cni_bin_dir }}"
+    - name: conf_dir
+      value: "{{ containerd_cni_conf_dir }}"
+
 - block:
   - name: Configure cri plugin registry section
     lineinfile:
@@ -50,12 +76,6 @@
       insertafter: '^ *\[{{ item.parent }}\]'
       path: /etc/containerd/config.toml
     with_items:
-      - line: '[plugins."io.containerd.grpc.v1.cri"]'
-        parent: 'plugins'
-        indent: 2
-      - line: '[plugins."io.containerd.grpc.v1.cri".cni]'
-        parent: 'plugins."io.containerd.grpc.v1.cri"'
-        indent: 4
       - line: '[plugins."io.containerd.grpc.v1.cri".registry]'
         parent: 'plugins."io.containerd.grpc.v1.cri"'
         indent: 4
@@ -70,18 +90,6 @@
       block: '{{ lookup("template", role_path + "/templates/registry_mirrors.toml.j2") }}'
       path: /etc/containerd/config.toml
     notify: restart containerd
-
-  - name: Configure CNI parameters
-    lineinfile:
-      line: '      {{ item.name }} = "{{ item.value }}"'
-      regexp: '^ +{{ item.name }} *= *'
-      insertafter: '^ *\[plugins."io.containerd.grpc.v1.cri".cni\]'
-      path: /etc/containerd/config.toml
-    with_items:
-      - name: bin_dir
-        value: "{{ containerd_cni_bin_dir }}"
-      - name: conf_dir
-        value: "{{ containerd_cni_conf_dir }}"
 
   - name: Configure cri plugin registry config section
     lineinfile:
