@@ -1,3 +1,5 @@
+![pipeline_status](https://gitlab.com/incubateur-pe/containerd/badges/dev/pipeline.svg)
+
 containerd
 =========
 
