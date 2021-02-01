@@ -6,3 +6,4 @@ containerd_cni_bin_dir: "{{ (ansible_distribution != 'Fedora') | ternary('/opt/c
 containerd_cni_conf_dir: /etc/cni/net.d
 containerd_data_root: /var/lib/containerd
 containerd_dockerio_mirror: https://registry-1.docker.io
+containerd_restart_disruption_budget: 20
