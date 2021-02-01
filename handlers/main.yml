@@ -4,3 +4,4 @@
     name: "containerd"
     enabled: true
     state: restarted
+  throttle: "{{ containerd_restart_disruption_budget }}"
