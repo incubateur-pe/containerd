@@ -2,7 +2,7 @@
 containerd_repo: https://download.docker.com/linux/
 docker_apt_ignore_key_error: true
 containerd_repo_valid_ssl: true
-containerd_cni_bin_dir: "{{ (ansible_distribution != 'Fedora') | ternary('/opt/cni/bin', '/usr/libexec/cni') }}"
+containerd_cni_bin_dir: "{{ (ansible_distribution_major_version|int < 33 and ansible_distribution == 'Fedora' ) | ternary('/usr/libexec/cni', '/opt/cni/bin') }}"
 containerd_cni_conf_dir: /etc/cni/net.d
 containerd_data_root: /var/lib/containerd
 containerd_dockerio_mirror: https://registry-1.docker.io
