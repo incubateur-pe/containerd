@@ -14,7 +14,7 @@ This user must have access to the libvirt socket.
 __Tests execution with docker:__
 ```
 # interactive :
-docker run --env-file molecule/common/env_pe.sh \
+docker run --env-file molecule/common/env_pe_distant.sh \
     -v ${HOME}/.ssh:/root/.ssh \
     -v $(pwd):/sources/containerd \
     -v ~/.vagrant.d/boxes/:/root/.vagrant.d/boxes/ \
