@@ -2,6 +2,7 @@
 - name: Construct repository address
   set_fact:
     containerd_repo_address: '{{ containerd_repo | regex_replace("/$", "") }}/{{ ansible_distribution | lower }}'
+  when: containerd_repo_address is not defined
 
 - name: "Set up package manager for {{ ansible_os_family }}"
   include_tasks: "config_{{ ansible_os_family }}.yml"
