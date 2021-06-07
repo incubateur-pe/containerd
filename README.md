@@ -22,6 +22,7 @@ Role Variables
 | docker_apt_ignore_key_error | true | Ignore errors on gpg key import |
 | containerd_repo_valid_ssl | true | Set to false to use a repository with for example a self signed certifcate |
 | containerd_restart_disruption_budget | 20 | Maximum number of parallel restarts |
+| containerd_repo_address | {{ containerd_repo | regex_replace("/$", "") }}/{{ ansible_distribution | lower }} | Containerd repository address |
 
 Example Playbook
 ----------------
