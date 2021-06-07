@@ -27,6 +27,13 @@ platforms:
     provider_options:
       connect_via_ssh: ${REMOTE_HOST:-false}
     provider_raw_config_args: ${PROVIDER_ARGS:-"[]"}
+  - name: alma
+    box: almalinux/8
+    memory: 1024
+    cpus: 1
+    provider_options:
+      connect_via_ssh: ${REMOTE_HOST:-false}
+    provider_raw_config_args: ${PROVIDER_ARGS:-"[]"}
 lint: |
   set -e
   yamllint .
@@ -45,6 +52,8 @@ provisioner:
         containerd_repo: ${DOCKER_YUM_MIRROR}
       debian:
         containerd_repo: ${DOCKER_APT_MIRROR}
+      alma:
+        containerd_repo_address: ${DOCKER_YUM_MIRROR}/centos
   connection_options:
     ansible_ssh_user: vagrant
     ansible_become: true
