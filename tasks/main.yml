@@ -18,6 +18,24 @@
 
 - meta: flush_handlers
 
+- name: Manage containerd cgroup
+  block:
+    - name: Set cgroup value in service file
+      community.general.ini_file:
+        path: /usr/lib/systemd/system/containerd.service
+        section: Service
+        option: Slice
+        value: "{{ containerd_service_slice }}"
+      register: slice_configuration
+
+    - name: Restart containerd service
+      systemd:
+        name: containerd
+        state: restarted
+        daemon-reload: yes
+      when: slice_configuration.changed
+  when: containerd_service_slice is defined
+
 - name: Ensure containerd is started and enabled
   systemd:
     name: "containerd"
