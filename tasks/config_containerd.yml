@@ -68,6 +68,14 @@
     - name: conf_dir
       value: "{{ containerd_cni_conf_dir }}"
 
+- name: Configure shim cgroup for runc
+  lineinfile:
+    line: '            ShimCgroup = "{{ containerd_shim_slice }}"'
+    regexp: '^            ShimCgroup = *'
+    insertafter: '^          \[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options\]'
+    path: /etc/containerd/config.toml
+  when: containerd_shim_slice is defined
+
 - block:
   - name: Configure cri plugin registry section
     lineinfile:
