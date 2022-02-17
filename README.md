@@ -25,6 +25,8 @@ Role Variables
 | containerd_repo_address | {{ containerd_repo | regex_replace("/$", "") }}/{{ ansible_distribution | lower }} | Containerd repository address |
 | containerd_service_slice | N/A | Cgroup slice to run containerd |
 | containerd_shim_slice | N/A | Cgroup path to execute containers |
+| containerd_daemon_slice | N/A | Cgroup path to execute containerd daemon 
+| containerd_systemd_cgroup | N/A | Cgroup driver systemd active |
 
 Example Playbook
 ----------------

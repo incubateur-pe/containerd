@@ -68,6 +68,14 @@
     - name: conf_dir
       value: "{{ containerd_cni_conf_dir }}"
 
+- name: Configure containerd daemon slice
+  lineinfile:
+    line: '  path = "{{ containerd_daemon_slice }}"'
+    regexp: '^  path = *'
+    insertafter: '^\[cgroup\]'
+    path: /etc/containerd/config.toml
+  when: containerd_daemon_slice is defined
+
 - name: Configure shim cgroup for runc
   lineinfile:
     line: '            ShimCgroup = "{{ containerd_shim_slice }}"'
@@ -75,6 +83,14 @@
     insertafter: '^          \[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options\]'
     path: /etc/containerd/config.toml
   when: containerd_shim_slice is defined
+
+- name: Configure cgroup driver for runc
+  lineinfile:
+    line: '            SystemdCgroup = {{ containerd_systemd_cgroup | ternary("true", "false") }}'
+    regexp: '^            SystemdCgroup = *'
+    insertafter: '^          \[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options\]'
+    path: /etc/containerd/config.toml
+  when: containerd_systemd_cgroup is defined
 
 - block:
   - name: Configure cri plugin registry section
