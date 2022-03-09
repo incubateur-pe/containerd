@@ -39,7 +39,7 @@
     line: '          endpoint = {{ dockerio_endpoint | to_json }}'
     insertafter: '^ *\[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"\]'
     path: /etc/containerd/config.toml
-  when: dockerio_endpoint != ""
+  when: dockerio_endpoint | length > 0
   vars:
     dockerio_endpoint: "{{ containerd_registry_mirrors | json_query('[?name==`docker.io`].endpoint[]') }}"
 

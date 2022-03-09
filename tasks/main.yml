@@ -16,7 +16,8 @@
 - name: containerd configuration
   include_tasks: config_containerd.yml
 
-- meta: flush_handlers
+- name: Flush handlers
+  meta: flush_handlers
 
 - name: Manage containerd cgroup
   block:
@@ -26,6 +27,7 @@
         section: Service
         option: Slice
         value: "{{ containerd_service_slice }}"
+        mode: 0644
       register: slice_configuration
 
     - name: Restart containerd service
