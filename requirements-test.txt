@@ -1,6 +1,6 @@
 ansible
 molecule
-molecule[docker]
+molecule-docker
 testinfra
 yamllint
 flake8
