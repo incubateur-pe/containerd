@@ -2,61 +2,48 @@
 dependency:
   name: galaxy
 driver:
-  name: vagrant
-  provider:
-    name: libvirt
+  name: docker
 platforms:
   - name: fedora
-    box: fedora/32-cloud-base
-    memory: 1024
-    cpus: 1
-    provider_options:
-      connect_via_ssh: ${REMOTE_HOST:-false}
-    provider_raw_config_args: ${PROVIDER_ARGS:-"[]"}
-  # - name: debian
-  #   box: debian/buster64
-  #   memory: 1024
-  #   cpus: 1
-  #   provider_options:
-  #     connect_via_ssh: ${REMOTE_HOST:-false}
-  #   provider_raw_config_args: ${PROVIDER_ARGS:-"[]"}
+    base: fedora
+    image: fedora:36
+    pre_build_image: false
+    dockerfile: Dockerfile.j2
+    privileged: true
+    command: "/usr/sbin/init"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    tmpfs:
+      - /tmp
+      - /run
   - name: alma
-    box: almalinux/8
-    memory: 1024
-    cpus: 1
-    provider_options:
-      connect_via_ssh: ${REMOTE_HOST:-false}
-    provider_raw_config_args: ${PROVIDER_ARGS:-"[]"}
+    base: almalinux
+    image: almalinux:8.5
+    pre_build_image: false
+    dockerfile: Dockerfile.j2
+    command: "/usr/sbin/init"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    tmpfs:
+      - /tmp
+      - /run
+    privileged: true
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      all:
+        containerd_repo: ${CONTAINERD_REPO}
+    host_vars:
+      alma:
+        containerd_repo_address: ${CONTAINERD_REPO}/centos/
 lint: |
   set -e
   yamllint .
   ansible-lint .
   flake8
-provisioner:
-  name: ansible
-  config_options:
-      ssh_connection:
-        ssh_args: ${SSH_ARGS:-""}
-  inventory:
-    host_vars:
-      fedora:
-        containerd_repo: ${DOCKER_YUM_MIRROR}
-      debian:
-        containerd_repo: ${DOCKER_APT_MIRROR}
-      alma:
-        containerd_repo_address: ${DOCKER_YUM_MIRROR}/centos
-  connection_options:
-    ansible_ssh_user: vagrant
-    ansible_become: true
-  log: true
-  lint:
-    name: ansible-lint
-scenario:
-  name: default
 verifier:
   name: testinfra
-  options:
-    ssh-config: ../common/tests/${SSH_CONFIG}
   directory: ../common/tests/
   lint:
     name: flake8

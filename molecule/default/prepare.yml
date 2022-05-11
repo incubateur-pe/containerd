@@ -5,7 +5,7 @@
   gather_facts: no
   tasks:
     - name: Installe les pré-requis python
-      pip:
+      ansible.builtin.pip:
         executable: /usr/bin/pip3
-        name:
-          - jmespath
+        extra_args: --user
+        requirements: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/requirements-test.txt"

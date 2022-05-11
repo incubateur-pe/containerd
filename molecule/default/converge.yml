@@ -5,31 +5,4 @@
     - name: "Include containerd"
       include_role:
         name: "containerd"
-      vars:
-        containerd_registry_mirrors:
-          - name: quay.io
-            endpoint:
-            - http://10.0.4.40:5002
-          - name: test
-            endpoint:
-            - https://10.0.4.40:5001
-          - name: docker.io
-            endpoint:
-            - http://10.0.4.40:5005
-        containerd_registry_configs:
-          - name: test
-            tls:
-              insecure_skip_verify: true
-            auth:
-              username: fakeUser
-              password: fakePassword
-              auth: "{{ ('fakeUser:fakePassword') | b64encode }}"
-              identitytoken: "token"
-
-  environment:
-    http_proxy: "{{ lookup('env', 'http_proxy') }}"
-    https_proxy: "{{ lookup('env', 'http_proxy') }}"
-    HTTP_PROXY: "{{ lookup('env', 'HTTP_PROXY') }}"
-    HTTPS_PROXY: "{{ lookup('env', 'HTTPS_PROXY') }}"
-    no_proxy: "{{ lookup('env', 'no_proxy') }}"
-    NO_PROXY: "{{ lookup('env', 'NO_PROXY') }}"
+        

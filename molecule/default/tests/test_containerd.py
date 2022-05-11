@@ -18,5 +18,3 @@ def test_containerd_service(host):
 def test_containerd_config(host):
     config = host.file("/etc/containerd/config.toml")
     assert config.exists
-    assert config.contains("http://10.0.4.40:5005")
-    assert config.contains("insecure_skip_verify")
