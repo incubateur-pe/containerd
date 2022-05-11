@@ -1,6 +1,6 @@
 ---
 - name: Construct repository address
-  set_fact:
+  ansible.builtin.set_fact:
     containerd_repo_address: '{{ containerd_repo | regex_replace("/$", "") }}/{{ ansible_distribution | lower }}'
   when: containerd_repo_address is not defined
 
@@ -8,7 +8,7 @@
   include_tasks: "config_{{ ansible_os_family }}.yml"
 
 - name: Install containerd
-  package:
+  ansible.builtin.package:
     name:
       - "containerd.io"
   notify: restart containerd
@@ -17,7 +17,7 @@
   include_tasks: config_containerd.yml
 
 - name: Flush handlers
-  meta: flush_handlers
+  ansible.builtin.meta: flush_handlers
 
 - name: Manage containerd cgroup
   block:
@@ -31,7 +31,7 @@
       register: slice_configuration
 
     - name: Restart containerd service
-      systemd:
+      ansible.builtin.systemd:
         name: containerd
         state: restarted
         daemon-reload: yes
@@ -39,7 +39,7 @@
   when: containerd_service_slice is defined
 
 - name: Ensure containerd is started and enabled
-  systemd:
+  ansible.builtin.systemd:
     name: "containerd"
     enabled: true
     state: started

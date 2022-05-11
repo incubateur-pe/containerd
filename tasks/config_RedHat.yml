@@ -1,12 +1,12 @@
 ---
 - name: Add Docker repository GPG key
-  rpm_key:
+  ansible.builtin.rpm_key:
     key: "{{ containerd_repo_address }}/gpg"
     validate_certs: "{{ containerd_repo_valid_ssl }}"
     state: present
 
 - name: Configure yum docker repository
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ containerd_repo_address }}/docker-ce.repo"
     dest: '/etc/yum.repos.d/docker-ce.repo'
     owner: root
@@ -14,7 +14,7 @@
     mode: 0644
 
 - name: Set baseUrl for docker repository
-  replace:
+  ansible.builtin.replace:
     path: /etc/yum.repos.d/docker-ce.repo
     regexp: '^baseurl=https://download.docker.com/linux/(.*)$'
     replace: 'baseurl={{ containerd_repo | regex_replace("/$", "") }}/\1'
@@ -22,11 +22,11 @@
 - name: Configure containerd on RHEL 8
   block:
     - name: Ensure container-selinux is installed.
-      package:
+      ansible.builtin.package:
         name: container-selinux
         state: present
 
     - name: Disable container-tools module
-      command: dnf -y module disable container-tools
+      ansible.builtin.command: dnf -y module disable container-tools
       changed_when: false
   when: ansible_distribution_major_version | int == 8
