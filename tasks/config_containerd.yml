@@ -110,7 +110,7 @@
         regexp: '^ * endpoint = \["https://registry-1.docker.io"\]'
         state: absent
         path: /etc/containerd/config.toml
-    when: dockerio_endpoint | length > 0
+    when: dockerio_endpoint | length > 0 and (not containerd_config.stat.exists or containerd_config_lines.stdout_lines | length == 0)
     vars:
       dockerio_endpoint: "{{ containerd_registry_mirrors | json_query('[?name==`docker.io`].endpoint[]') }}"
 
