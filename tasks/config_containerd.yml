@@ -33,16 +33,6 @@
     line: 'root = "{{ containerd_data_root }}"'
     path: /etc/containerd/config.toml
 
-- name: Configure docker.io mirror
-  lineinfile:
-    regexp: "^ * endpoint *=.*"
-    line: '          endpoint = {{ dockerio_endpoint | to_json }}'
-    insertafter: '^ *\[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"\]'
-    path: /etc/containerd/config.toml
-  when: dockerio_endpoint | length > 0
-  vars:
-    dockerio_endpoint: "{{ containerd_registry_mirrors | json_query('[?name==`docker.io`].endpoint[]') }}"
-
 - name: Configure cri plugin section
   lineinfile:
     line: "{{ item.line | indent(item.indent, true) }}"
@@ -107,6 +97,22 @@
       - line: '[plugins."io.containerd.grpc.v1.cri".registry.mirrors]'
         parent: 'plugins."io.containerd.grpc.v1.cri".registry'
         indent: 6
+
+  - block:
+    - name: Ensure docker.io mirror configuration does not exists
+      lineinfile:
+        regexp: '^ *\[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"\]'
+        state: absent
+        path: /etc/containerd/config.toml
+
+    - name: Remove default docker.io mirror
+      lineinfile:
+        regexp: '^ * endpoint = \["https://registry-1.docker.io"\]'
+        state: absent
+        path: /etc/containerd/config.toml
+    when: dockerio_endpoint | length > 0
+    vars:
+      dockerio_endpoint: "{{ containerd_registry_mirrors | json_query('[?name==`docker.io`].endpoint[]') }}"
 
   - name: Configure registry mirrors
     blockinfile:
