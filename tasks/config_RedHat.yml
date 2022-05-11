@@ -11,6 +11,7 @@
     dest: '/etc/yum.repos.d/docker-ce.repo'
     owner: root
     group: root
+    validate_certs: "{{ containerd_repo_valid_ssl }}"
     mode: 0644
 
 - name: Set baseUrl for docker repository
