@@ -1,0 +1,6 @@
+molecule
+molecule[docker]
+testinfra
+yamllint
+flake8
+jmespath
