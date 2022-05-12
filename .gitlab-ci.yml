@@ -81,5 +81,5 @@ publish:
     refs:
       - tags
   script:
-    - ansible-galaxy login --api-key "${GALAXY_TOKEN}" --github-token "${GITHUB_TOKEN}"
-    - ansible-galaxy import incubateur-pe containerd
+    # - ansible-galaxy login --api-key "${GALAXY_TOKEN}" --github-token "${GITHUB_TOKEN}"
+    - ansible-galaxy import incubateur-pe containerd --token "${GALAXY_TOKEN}"
