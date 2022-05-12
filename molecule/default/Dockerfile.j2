@@ -1,4 +1,4 @@
-FROM base/{{ item.base }}:latest as configYum
+FROM base/{{ item.base }} as configYum
 FROM base/redhat:certs as configCerts
 
 FROM {{ item.image }}
