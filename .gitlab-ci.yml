@@ -1,9 +1,6 @@
 ---
 image: docker:stable-dind
 
-services:
-  - docker:dind
-
 stages:
   - lint
   - test
