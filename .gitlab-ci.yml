@@ -33,6 +33,7 @@ lint:
     - docker info
     - python3 --version
     - python3 -m pip install -r requirements-test.txt
+    - ansible-galaxy collection install -v ${GALAXY_PROXY}/community-docker-2.4.0.tar.gz
     - ansible --version
     - molecule --version
   script:
@@ -51,6 +52,7 @@ test-all:
     - docker info
     - python3 --version
     - python3 -m pip install -r requirements-test.txt
+    - ansible-galaxy collection install -v ${GALAXY_PROXY}/community-docker-2.4.0.tar.gz
     - ansible --version
     - molecule --version
   script:
