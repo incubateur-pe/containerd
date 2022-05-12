@@ -7,6 +7,9 @@ stages:
   - merge
   - release
 
+variables:
+  PYTHONWARNINGS: ignore:Unverified HTTPS request
+
 .onlys_changes: &only_changes
   changes:
     - "molecule/**/*"
