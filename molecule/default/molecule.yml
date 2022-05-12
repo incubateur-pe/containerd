@@ -4,18 +4,18 @@ dependency:
 driver:
   name: docker
 platforms:
-  - name: fedora
-    base: fedora
-    image: fedora:36
-    pre_build_image: false
-    dockerfile: Dockerfile.j2
-    privileged: true
-    command: "/usr/sbin/init"
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:rw
-    tmpfs:
-      - /tmp
-      - /run
+  # - name: fedora
+  #   base: fedora
+  #   image: fedora:36
+  #   pre_build_image: false
+  #   dockerfile: Dockerfile.j2
+  #   privileged: true
+  #   command: "/usr/sbin/init"
+  #   volumes:
+  #     - /sys/fs/cgroup:/sys/fs/cgroup:rw
+  #   tmpfs:
+  #     - /tmp
+  #     - /run
   - name: alma
     base: almalinux
     image: almalinux:8.5
