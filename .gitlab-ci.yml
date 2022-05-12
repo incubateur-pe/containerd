@@ -30,9 +30,8 @@ lint:
     - sed -i -e "s@http://dl-cdn.alpinelinux.org@${ALPINE_MIRROR}@g" /etc/apk/repositories
     - echo "$PIP_CONFIG" > /etc/pip.conf
     - apk add --no-cache python3 python3-dev py3-pip py3-wheel gcc git curl build-base autoconf automake py3-cryptography linux-headers musl-dev libffi-dev openssl-dev openssh
-    - docker info
     - python3 --version
-    - python3 -m pip install -r requirements-test.txt
+    - python3 -m pip install -r requirements-test.txt -q
     - ansible-galaxy collection install -v ${GALAXY_PROXY}/community-docker-2.4.0.tar.gz
     - ansible --version
     - molecule --version
@@ -49,9 +48,8 @@ test-all:
     - sed -i -e "s@http://dl-cdn.alpinelinux.org@${ALPINE_MIRROR}@g" /etc/apk/repositories
     - echo "$PIP_CONFIG" > /etc/pip.conf
     - apk add --no-cache python3 python3-dev py3-pip py3-wheel gcc git curl build-base autoconf automake py3-cryptography linux-headers musl-dev libffi-dev openssl-dev openssh
-    - docker info
     - python3 --version
-    - python3 -m pip install -r requirements-test.txt
+    - python3 -m pip install -r requirements-test.txt -q
     - ansible-galaxy collection install -v ${GALAXY_PROXY}/community-docker-2.4.0.tar.gz
     - ansible --version
     - molecule --version
