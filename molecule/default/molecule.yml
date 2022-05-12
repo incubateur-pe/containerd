@@ -44,6 +44,5 @@ lint: |
   flake8
 verifier:
   name: testinfra
-  directory: ../common/tests/
   lint:
     name: flake8
